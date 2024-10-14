@@ -1,7 +1,7 @@
 const PERSONS_API = 'https://cdnapi.smotrim.ru/api/v1/boxes/vesti2'
 const PERSONS_API_URL = 'https://cdnapi.smotrim.ru/api/v1/persons/'
 
-export const getPersonsIds = async () => {
+const getPersonsIds = async () => {
   const response = await fetch(PERSONS_API)
   const json = await response.json()
 
@@ -16,13 +16,9 @@ export const getPersonsIds = async () => {
   return result
 }
 
-export const getImageUrl = async (id) => {
-  const response = await fetch(`https://api.smotrim.ru/api/v1/pictures/${id}/bq/redirect`)
+const getImageUrl = (id) => `https://api.smotrim.ru/api/v1/pictures/${id}/bq/redirect`
 
-  return response.url
-}
-
-export const getPersonDescription = async (id) => {
+const getPersonDescription = async (id) => {
   const response = await fetch(PERSONS_API_URL + id)
   const { anons, body } = (await response.json()).data
 
@@ -35,8 +31,13 @@ export const getPersonsInfo = async () => {
 
   const requests = personsIds.map(async (person) => {
     const { anons, body } = await getPersonDescription(person?.id)
-    const imageUrl = await getImageUrl(person?.picId)
-    return { ...person, anons, body, imageUrl }
+    const imageUrl = getImageUrl(person?.picId)
+    return {
+      ...person,
+      anons,
+      body,
+      imageUrl
+    }
   })
 
   const result = await Promise.all(requests)
